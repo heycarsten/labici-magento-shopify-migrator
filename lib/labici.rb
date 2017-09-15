@@ -1,0 +1,2 @@
+module LaBici
+end
