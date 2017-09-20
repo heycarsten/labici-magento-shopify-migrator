@@ -16,12 +16,15 @@ GEM
       i18n (~> 0.7)
       minitest (~> 5.1)
       tzinfo (~> 1.1)
+    awesome_print (1.8.0)
     builder (3.2.3)
     concurrent-ruby (1.0.5)
     dotenv (2.2.1)
     i18n (0.8.6)
     minitest (5.10.3)
+    mysql2 (0.4.9)
     rack (2.0.3)
+    sequel (5.0.0)
     shopify_api (4.9.0)
       activeresource (>= 3.0.0)
       rack
@@ -33,7 +36,10 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  awesome_print
   dotenv
+  mysql2
+  sequel
   shopify_api
 
 BUNDLED WITH
