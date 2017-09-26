@@ -1,0 +1,15 @@
+version: '3.3'
+services:
+  db:
+    image: mysql
+    env_file: .env
+    ports:
+      - '3306:3306'
+    volumes:
+      - ./data/magento_db:/docker-entrypoint-initdb.d
+  app:
+    build: .
+    volumes:
+      - .:/labici
+    depends_on:
+      - db

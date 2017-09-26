@@ -6,10 +6,10 @@ module LaBici
       @db = Sequel.connect(
         adapter: 'mysql2',
         encoding: 'utf8',
-        database: ENV['MAGENTO_DB_NAME'],
-        username: ENV['MAGENTO_DB_USER'],
-        password: ENV['MAGENTO_DB_PASS'],
-        host: ENV['MAGENTO_DB_HOST']
+        database: ENV['MYSQL_DATABASE'],
+        username: ENV['MYSQL_USER'],
+        password: ENV['MYSQL_ROOT_PASSWORD'],
+        host: ENV['MYSQL_HOST']
       )
 
       @db.extension(:pagination)
