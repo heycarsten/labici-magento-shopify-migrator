@@ -21,20 +21,21 @@ GEM
     coderay (1.1.2)
     concurrent-ruby (1.0.5)
     dotenv (2.2.1)
-    i18n (0.8.6)
-    method_source (0.8.2)
+    i18n (0.9.1)
+      concurrent-ruby (~> 1.0)
+    method_source (0.9.0)
     minitest (5.10.3)
     mysql2 (0.4.9)
-    pry (0.11.0)
+    pry (0.11.3)
       coderay (~> 1.1.0)
-      method_source (~> 0.8.1)
+      method_source (~> 0.9.0)
     rack (2.0.3)
-    sequel (5.0.0)
+    sequel (5.3.0)
     shopify_api (4.9.0)
       activeresource (>= 3.0.0)
       rack
     thread_safe (0.3.6)
-    tzinfo (1.2.3)
+    tzinfo (1.2.4)
       thread_safe (~> 0.1)
 
 PLATFORMS
@@ -43,10 +44,10 @@ PLATFORMS
 DEPENDENCIES
   awesome_print
   dotenv
-  mysql2
+  mysql2 (= 0.4.9)
   pry
   sequel
   shopify_api
 
 BUNDLED WITH
-   1.15.4
+   1.16.0
