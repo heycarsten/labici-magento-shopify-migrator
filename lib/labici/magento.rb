@@ -60,7 +60,7 @@ module LaBici
       SQL
     end
 
-    def products(manufacturer_value: nil)
+    def products(manufacturer_value: nil, entity_type_id: nil, entity_ids: nil)
       db[<<-SQL]
         SELECT
           e.entity_id AS id,
@@ -162,6 +162,8 @@ module LaBici
                 )
             )
 #{"WHERE cpf.manufacturer_value = '#{manufacturer_value}'" if manufacturer_value}
+#{"WHERE e.type_id = '#{entity_type_id}'" if entity_type_id}
+#{"WHERE e.entity_id IN (#{entity_ids.join(',')})" if entity_ids}
       SQL
     end
   end

@@ -7,10 +7,6 @@ module LaBici
         "@#{ENV['SHOPIFY_SHOP_NAME']}.myshopify.com/admin"
     end
 
-    def products
-      ShopifyAPI::Product.find(:all)
-    end
-
     def create_product(title:, body_html:, vendor:, product_type:, price:, sku:, image_file: nil, meta_title_tag: nil, meta_description_tag: nil)
       product = ShopifyAPI::Product.new
 
