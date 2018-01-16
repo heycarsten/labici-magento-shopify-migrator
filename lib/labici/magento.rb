@@ -60,6 +60,80 @@ module LaBici
       SQL
     end
 
+    def product_options(product_id)
+      db[<<-SQL]
+        SELECT
+        FROM
+          catalog_product_link pl
+      SQL
+    end
+
+    def product_super_attributes(product_id)
+      db[<<-SQL]
+        SELECT
+          sa.product_super_attribute_id AS id,
+          sa.product_id AS product_id,
+          sa.position AS position,
+          sal.value AS label,
+          sap.pricing_value AS price_value,
+          sap.is_percent AS price_is_percent
+        FROM
+          catalog_product_super_attribute sa
+        LEFT JOIN
+          catalog_product_super_attribute_label sal ON
+            sa.product_super_attribute_id = sal.product_super_attribute_id
+        LEFT JOIN
+          catalog_product_super_attribute_pricing sap ON
+            sa.product_super_attribute_id = sap.product_super_attribute_id
+        WHERE
+          sa.product_id = #{product_id}
+      SQL
+    end
+
+    def product_media_gallery(product_id)
+      db[<<-SQL]
+        SELECT
+          g.value_id AS id,
+          g.entity_id AS product_id,
+          g.value AS image_path,
+          gv.position AS position
+        FROM
+          catalog_product_entity_media_gallery g
+        LEFT JOIN
+          catalog_product_entity_media_gallery_value gv ON gv.value_id = g.value_id
+        WHERE
+          g.entity_id = #{product_id}
+        ORDER BY
+          gv.position
+      SQL
+    end
+
+    def product_attribute_options(product_id)
+      db[<<-SQL]
+        SELECT
+          p.entity_id,
+          -- p.entity_type_id,
+          -- p.attribute_set_id,
+          p.type_id,
+          p.sku,
+          a.attribute_id,
+          a.frontend_label AS attribute,
+          -- a.attribute_code,
+          av.value,
+          ao.*
+        FROM
+          catalog_product_entity p
+        LEFT JOIN catalog_product_entity_int av ON
+          p.entity_id = av.entity_id
+        LEFT JOIN eav_attribute a ON
+          av.attribute_id = a.attribute_id
+        LEFT JOIN eav_attribute_option_value ao ON
+          av.value = ao.option_id
+        WHERE
+          p.entity_id = #{product_id}
+      SQL
+    end
+
     def products(manufacturer_value: nil, entity_type_id: nil, entity_ids: nil)
       db[<<-SQL]
         SELECT

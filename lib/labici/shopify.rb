@@ -7,7 +7,7 @@ module LaBici
         "@#{ENV['SHOPIFY_SHOP_NAME']}.myshopify.com/admin"
     end
 
-    def create_product(title:, body_html:, vendor:, product_type:, price:, sku:, image_file: nil, meta_title_tag: nil, meta_description_tag: nil)
+    def create_product(title:, body_html:, vendor:, product_type:, price:, sku:, tags: [], images: nil, meta_title_tag: nil, meta_description_tag: nil)
       product = ShopifyAPI::Product.new
 
       product.title = title
@@ -16,13 +16,19 @@ module LaBici
       product.metafields_global_title_tag = meta_title_tag if meta_title_tag
       product.metafields_global_description_tag = meta_description_tag if meta_description_tag
       product.product_type = product_type
+      product.tags = tags.join(', ')
 
       product.variants = [
         { position: 1, price: price, sku: sku }
       ]
 
-      if image_file && (image_data = encode_image(image_file))
-        product.images = [{ attachment: image_data }]
+      image_payloads = Array(images).map { |image| {
+        attachment: encode_image(image[:file]),
+        position: image[:position]
+      } }
+
+      if image_payloads.any?
+        product.images = image_payloads
       end
 
       product.save
