@@ -66,7 +66,7 @@ module LaBici
           vendor: mp[:vendor],
           images: images,
           product_type: product_type
-        }
+        )
 
         if is_successful
           remember_product_id(mp[:id])
