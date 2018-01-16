@@ -36,6 +36,8 @@ module LaBici
       magento.products(entity_type_id: 'configurable').each do |mp|
         next if has_migrated_product_id?(mp[:id])
 
+        mp[:title] = mp[:title].strip
+
         print "-- #{mp[:title]} ... "
 
         cats = magento.product_categories(entity_id: mp[:id]).all
