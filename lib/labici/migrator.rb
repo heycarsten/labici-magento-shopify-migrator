@@ -7,10 +7,28 @@ module LaBici
     attr_reader :magento, :shopify
 
     MAG_TYPE_CATEGORY_ID = 24
+    MAG_BRAND_CATEGORY_ID = 23
     MEMO_FILENAME = 'migrated_product_ids.txt'
 
+    MAG_TYPE_CATEGORY_IDS = [
+      25,
+      21,
+      24,
+      22,
+      19
+    ]
+
     IGNORE_CATEGORY_IDS = [
-      SHOP_BY_BRAND = 23
+      1,
+      2,
+      489,
+      107,
+      39,
+      488,
+      20,
+      18,
+      17,
+      23
     ]
 
     def self.run!
@@ -26,31 +44,34 @@ module LaBici
     def self.tagify_categories(categories)
       categories.
         reject { |c| IGNORE_CATEGORY_IDS.include?(c[:id]) }.
-        map { |c| c[:name].sub(/Shop By Brand/i, 'Brand') }.
+        map { |c| c[:name] }.
         uniq
     end
 
     def run!
-      puts "---> Migrating products from Magento to Shopify"
+      puts "==== Migrating products from Magento to Shopify"
 
       magento.products(entity_type_id: 'configurable').each do |mp|
         next if has_migrated_product_id?(mp[:id])
 
         mp[:title] = mp[:title].strip
 
-        print "-- #{mp[:title]} ... "
+        print "---> #{mp[:title]} ... "
 
-        cats = magento.product_categories(entity_id: mp[:id]).all
+        cats = magento.all_product_categories(mp[:id]).all
         tags = self.class.tagify_categories(cats)
 
-        product_type_category = magento.product_categories(
-          entity_id: mp[:id],
-          parent_id: MAG_TYPE_CATEGORY_ID
-        ).first
+        product_type_category = cats.detect { |c| MAG_TYPE_CATEGORY_IDS.include?(c[:id]) }
 
         product_type = if product_type_category
           product_type_category[:name]
         end
+
+        product_brand_category = cats.detect { |c| c[:parent_id] == MAG_BRAND_CATEGORY_ID }
+
+        product_vendor = mp[:vendor] || (
+          product_brand_category ? product_brand_category[:name] : nil
+        )
 
         gallery_items = magento.product_media_gallery(mp[:id]).all
 
@@ -59,26 +80,26 @@ module LaBici
           position: item[:position]
         } }
 
-        is_successful = shopify.create_product(
+        shopify_product = shopify.create_product(
           title: mp[:title],
           body_html: mp[:description],
           price: mp[:price] && mp[:price].to_f,
           sku: mp[:sku],
           tags: tags,
-          vendor: mp[:vendor],
+          vendor: product_vendor,
           images: images,
           product_type: product_type
         )
 
-        if is_successful
-          remember_product_id(mp[:id])
+        if shopify_product
+          remember_product_ids(mp[:id], shopify_product.id)
           puts '✅'
         else
           puts '💔'
           break
         end
 
-        sleep 1
+        sleep 0.55
       end
 
       puts "---- Done!"
@@ -92,13 +113,12 @@ module LaBici
       @memory_filename ||= File.join(root, "data/#{MEMO_FILENAME}")
     end
 
-    def has_migrated_product_id?(product_id)
+    def has_migrated_product_id?(magento_product_id)
       found = false
-      compare_line = "#{product_id}\n"
 
       File.open(memory_filename, 'r') { |file|
         file.each_line { |line|
-          next unless line == compare_line
+          next unless /\A#{magento_product_id},/ =~ line
           found = true
           break
         }
@@ -107,8 +127,10 @@ module LaBici
       found
     end
 
-    def remember_product_id(entity_id)
-      File.open(memory_filename, 'a+') { |file| file.puts(entity_id) }
+    def remember_product_ids(magento_product_id, shopify_product_id)
+      File.open(memory_filename, 'a+') { |file|
+        file.puts("#{magento_product_id},#{shopify_product_id}")
+      }
     end
   end
 end

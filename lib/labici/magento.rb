@@ -15,35 +15,43 @@ module LaBici
       @db.extension(:pagination)
     end
 
-    def product_categories(entity_id:, parent_id: nil)
-      db[<<-SQL
+    def all_product_categories(product_id)
+      ds = db[<<-SQL]
         SELECT
-          DISTINCT cce.entity_id AS id,
-          ccev_path.value AS path,
-          ccev_name.value AS name,
-          cce.level,
-          cce.parent_id
-        FROM catalog_category_product ccp
-        JOIN catalog_category_entity cce ON
-          cce.entity_id = ccp.category_id
-        JOIN eav_entity_type ee ON
-          cce.entity_type_id = ee.entity_type_id AND
-          ee.entity_model = 'catalog/category'
-        LEFT JOIN catalog_category_entity_varchar ccev_path ON
-          ccev_path.entity_id = cce.entity_id AND
-          ccev_path.attribute_id = (
-            SELECT attribute_id FROM eav_attribute WHERE attribute_code = 'url_path' LIMIT 1
-          )
-        LEFT JOIN catalog_category_entity_varchar ccev_name ON
-          ccev_name.entity_id = cce.entity_id AND
-          ccev_name.attribute_id = (
-            SELECT attribute_id FROM eav_attribute WHERE attribute_code  = 'name' LIMIT 1
+          ce.path AS path
+        FROM
+          catalog_category_product cp
+        LEFT JOIN
+          catalog_category_entity ce ON
+          cp.category_id = ce.entity_id
+        WHERE
+          cp.product_id = #{product_id}
+      SQL
+
+      ids = ds.all.map { |row|
+        Array(row[:path].to_s.split('/')).map(&:to_i)
+      }.flatten.uniq
+
+      db[<<-SQL, ids]
+        SELECT DISTINCT
+          ce.entity_id AS id,
+          ce.level AS level,
+          ce.parent_id AS parent_id,
+          cev_name.value AS name
+        FROM
+          catalog_category_entity ce
+        JOIN
+          catalog_category_entity_varchar cev_name ON
+          cev_name.entity_id = ce.entity_id AND
+          cev_name.attribute_id = (
+            SELECT attribute_id
+            FROM eav_attribute
+            WHERE attribute_code  = 'name'
+            LIMIT 1
           )
         WHERE
-          ccp.product_id = #{entity_id}
-          #{"AND cce.parent_id = #{parent_id}" if parent_id}
+          ce.entity_id IN ?
       SQL
-      ]
     end
 
     def product_attributes

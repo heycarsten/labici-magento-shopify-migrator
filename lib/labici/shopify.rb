@@ -31,7 +31,11 @@ module LaBici
         product.images = image_payloads
       end
 
-      product.save
+      if product.save
+        product
+      else
+        false
+      end
     end
 
     def encode_image(image_file)
