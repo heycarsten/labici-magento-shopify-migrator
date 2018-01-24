@@ -15,6 +15,56 @@ module LaBici
       @db.extension(:pagination)
     end
 
+    def customer_address(id)
+    end
+
+    def customers
+      attribute_codes = %w[
+        confirmation
+        created_in
+        default_billing
+        default_shipping
+        dob
+        firstname
+        middlename
+        lastname
+        prefix
+        suffix
+      ]
+
+      eav_attributes = db[:eav_attribute].where(
+        entity_type_id: 1,
+        attribute_code: attribute_codes
+      )
+
+      attributes = eav_attributes.each_with_index.map { |ea, i|
+        join_to_table = :"customer_entity_#{ea[:backend_type]}"
+      {
+        select: "v#{i}.value AS #{ea[:attribute_code]}",
+        join: {
+          alias: :"v#{i}",
+          table: join_to_table,
+          attribute_id: ea[:attribute_id]
+        },
+        join_sql: <<-SQL
+LEFT JOIN #{join_to_table} v#{i} ON
+  customer_entity.entity_id = v#{i}.entity_id AND
+  v#{i}.attribute_id = #{ea[:attribute_id]}
+        SQL
+      } }
+
+      db[<<-SQL]
+        SELECT
+          customer_entity.entity_id AS id,
+          customer_entity.email AS email,
+          customer_entity.created_at AS created_at,
+          #{attributes.map { |a| a[:select] }.join(',')}
+        FROM
+          customer_entity
+        #{attributes.map { |a| a[:join_sql] }.join("\n")}
+      SQL
+    end
+
     def all_product_categories(product_id)
       ds = db[<<-SQL]
         SELECT
@@ -71,8 +121,31 @@ module LaBici
     def product_options(product_id)
       db[<<-SQL]
         SELECT
+          e.sku AS sku,
+          cv.value AS product_name,
+          t.title AS option_name,
+          ot.title AS option_value,
+          op.price AS option_price
         FROM
-          catalog_product_link pl
+          catalog_product_option o
+        JOIN
+          catalog_product_entity e ON e.entity_id = o.product_id
+        JOIN
+          catalog_product_option_title t ON t.option_id = o.option_id
+        JOIN catalog_product_entity_varchar cv ON
+          cv.entity_id = e.entity_id AND
+          cv.attribute_id = (
+            SELECT attribute_id
+            FROM eav_attribute ea
+            JOIN eav_entity_type et ON
+              et.entity_type_code = 'catalog_product' AND
+              et.entity_type_id = ea.entity_type_id
+            WHERE ea.attribute_code = 'name'
+          )
+        LEFT JOIN catalog_product_option_type_value ov ON ov.option_id = o.option_id
+        LEFT JOIN catalog_product_option_type_title ot ON ot.option_type_id = ov.option_type_id
+        LEFT JOIN catalog_product_option_type_price op ON op.option_type_id = ot.option_type_id
+        WHERE e.entity_id = #{product_id}
       SQL
     end
 
@@ -116,33 +189,7 @@ module LaBici
       SQL
     end
 
-    def product_attribute_options(product_id)
-      db[<<-SQL]
-        SELECT
-          p.entity_id,
-          -- p.entity_type_id,
-          -- p.attribute_set_id,
-          p.type_id,
-          p.sku,
-          a.attribute_id,
-          a.frontend_label AS attribute,
-          -- a.attribute_code,
-          av.value,
-          ao.*
-        FROM
-          catalog_product_entity p
-        LEFT JOIN catalog_product_entity_int av ON
-          p.entity_id = av.entity_id
-        LEFT JOIN eav_attribute a ON
-          av.attribute_id = a.attribute_id
-        LEFT JOIN eav_attribute_option_value ao ON
-          av.value = ao.option_id
-        WHERE
-          p.entity_id = #{product_id}
-      SQL
-    end
-
-    def products(manufacturer_value: nil, entity_type_id: nil, entity_ids: nil)
+    def products(manufacturer_value: nil, entity_type_id: nil, entity_ids: nil, simple_with_options: false)
       db[<<-SQL]
         SELECT
           e.entity_id AS id,
@@ -246,6 +293,7 @@ module LaBici
 #{"WHERE cpf.manufacturer_value = '#{manufacturer_value}'" if manufacturer_value}
 #{"WHERE e.type_id = '#{entity_type_id}'" if entity_type_id}
 #{"WHERE e.entity_id IN (#{entity_ids.join(',')})" if entity_ids}
+#{"WHERE e.type_id = 'simple' AND (SELECT COUNT(cpo.option_id) FROM catalog_product_option cpo WHERE cpo.product_id = e.entity_id) > 0" if simple_with_options}
       SQL
     end
   end

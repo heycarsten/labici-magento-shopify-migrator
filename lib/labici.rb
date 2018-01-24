@@ -7,4 +7,5 @@ require 'ap'
 module LaBici
 end
 
-require 'labici/migrator'
+require 'labici/configurable_product_migrator'
+require 'labici/simple_product_migrator'

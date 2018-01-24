@@ -8,34 +8,37 @@ module LaBici
     end
 
     def create_product(title:, body_html:, vendor:, product_type:, price:, sku:, tags: [], images: nil, meta_title_tag: nil, meta_description_tag: nil)
-      product = ShopifyAPI::Product.new
+      ap "CREATE: #{title}"
+      return
 
-      product.title = title
-      product.body_html = body_html
-      product.vendor = vendor
-      product.metafields_global_title_tag = meta_title_tag if meta_title_tag
-      product.metafields_global_description_tag = meta_description_tag if meta_description_tag
-      product.product_type = product_type
-      product.tags = tags.join(', ')
+      # product = ShopifyAPI::Product.new
 
-      product.variants = [
-        { position: 1, price: price, sku: sku }
-      ]
+      # product.title = title
+      # product.body_html = body_html
+      # product.vendor = vendor
+      # product.metafields_global_title_tag = meta_title_tag if meta_title_tag
+      # product.metafields_global_description_tag = meta_description_tag if meta_description_tag
+      # product.product_type = product_type
+      # product.tags = tags.join(', ')
 
-      image_payloads = Array(images).map { |image| {
-        attachment: encode_image(image[:file]),
-        position: image[:position]
-      } }
+      # product.variants = [
+      #   { position: 1, price: price, sku: sku }
+      # ]
 
-      if image_payloads.any?
-        product.images = image_payloads
-      end
+      # image_payloads = Array(images).map { |image| {
+      #   attachment: encode_image(image[:file]),
+      #   position: image[:position]
+      # } }
 
-      if product.save
-        product
-      else
-        false
-      end
+      # if image_payloads.any?
+      #   product.images = image_payloads
+      # end
+
+      # if product.save
+      #   product
+      # else
+      #   false
+      # end
     end
 
     def encode_image(image_file)
