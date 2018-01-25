@@ -2,8 +2,6 @@ require 'labici/product_migrator'
 
 module LaBici
   class SimpleProductMigrator < ProductMigrator
-    MEMO_FILENAME = 'migrated_simple_product_ids.txt'.freeze
-
     def magento_products
       magento.products(simple_with_options: true)
     end
@@ -36,10 +34,6 @@ module LaBici
       }
 
       attrs
-    end
-
-    def memory_filename
-      @memory_filename ||= File.join(root, "data/#{MEMO_FILENAME}")
     end
   end
 end

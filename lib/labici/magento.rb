@@ -15,7 +15,54 @@ module LaBici
       @db.extension(:pagination)
     end
 
-    def customer_address(id)
+    def address(id)
+      addresses(id: id).first
+    end
+
+    def addresses(customer_id: nil, id: nil)
+      attribute_codes = %w[
+        firstname
+        lastname
+        company
+        street
+        city
+        country_id
+        region
+        region_id
+        postcode
+        telephone
+        fax
+      ].freeze
+
+      eav_attributes = db[:eav_attribute].
+        select(:attribute_id, :attribute_code, :backend_type).
+        where(entity_type_id: 2, attribute_code: attribute_codes)
+
+      attributes = eav_attributes.each_with_index.map { |ea, i| {
+        select: "v#{i}.value AS #{ea[:attribute_code]}",
+        join_sql: <<-SQL
+JOIN customer_address_entity_#{ea[:backend_type]} v#{i} ON
+  a.entity_id = v#{i}.entity_id AND
+  v#{i}.attribute_id = #{ea[:attribute_id]}
+        SQL
+      } }
+
+      db[<<-SQL]
+        SELECT
+          a.entity_id AS id,
+          a.parent_id AS customer_id,
+          r.code AS province_code,
+          r.default_name AS region_name,
+          #{attributes.map { |a| a[:select] }.join(', ')}
+        FROM
+          customer_address_entity a
+        #{attributes.map { |a| a[:join_sql] }.join("\n")}
+        LEFT JOIN
+          directory_country_region r ON r.region_id = v7.value
+        WHERE
+          #{"a.parent_id = #{customer_id}" if customer_id}
+          #{"a.entity_id = #{id}" if id}
+      SQL
     end
 
     def customers

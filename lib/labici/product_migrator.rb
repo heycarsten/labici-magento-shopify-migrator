@@ -1,23 +1,18 @@
 require 'labici/magento'
 require 'labici/shopify'
+require 'labici/abstract_migrator'
 require 'fileutils'
 
 module LaBici
-  class ProductMigrator
-    attr_reader :magento, :shopify
-
+  class ProductMigrator < AbstractMigrator
     MAG_TYPE_CATEGORY_ID = 24
     MAG_BRAND_CATEGORY_ID = 23
-    MEMO_FILENAME = 'migrated_product_ids.txt'
-
     MAG_TYPE_CATEGORY_IDS = [
       25,
       21,
       24,
       22,
-      19
-    ]
-
+      19]
     IGNORE_CATEGORY_IDS = [
       1,
       2,
@@ -28,18 +23,7 @@ module LaBici
       20,
       18,
       17,
-      23
-    ]
-
-    def self.run!
-      new.run!
-    end
-
-    def initialize
-      @magento = Magento.new
-      @shopify = Shopify.new
-      FileUtils.touch(memory_filename)
-    end
+      23]
 
     def self.tagify_categories(categories)
       categories.
@@ -48,12 +32,8 @@ module LaBici
         uniq
     end
 
-    def label
-      @label ||= self.class.to_s.
-        split('::').
-        last.
-        sub('ProductMigrator', '').
-        downcase
+    def banner
+      'Migrating products from Magento to Shopify'
     end
 
     def magento_products
@@ -95,61 +75,27 @@ module LaBici
       } }
     end
 
-    def run!
-      puts "==== [#{label}] Migrating products from Magento to Shopify"
-
+    def perform
       magento_products.each do |mp|
-        next if has_migrated_product_id?(mp[:id])
+        next if has_migrated_id?(mp[:id])
 
         mp[:title] = mp[:title].strip
 
-        print "---> #{mp[:title]} ... "
+        notify_start_task(mp[:title])
 
         shopify_attrs   = magento_to_shopify_attrs(mp)
         shopify_product = shopify.create_product(shopify_attrs)
 
         if shopify_product.valid?
-          remember_product_ids(mp[:id], shopify_product.id)
-          puts '✅'
+          remember_ids(mp[:id], shopify_product.id)
+          notify_success
         else
-          puts '💔'
+          notify_failure
           ap shopify_attrs
           ap shopify_product.errors
           break
         end
-
-        sleep 0.55
       end
-
-      puts "---- Done!"
-    end
-
-    def root
-      @root ||= File.expand_path('../../..', __FILE__)
-    end
-
-    def memory_filename
-      @memory_filename ||= File.join(root, "data/#{MEMO_FILENAME}")
-    end
-
-    def has_migrated_product_id?(magento_product_id)
-      found = false
-
-      File.open(memory_filename, 'r') { |file|
-        file.each_line { |line|
-          next unless /\A#{magento_product_id},/ =~ line
-          found = true
-          break
-        }
-      }
-
-      found
-    end
-
-    def remember_product_ids(magento_product_id, shopify_product_id)
-      File.open(memory_filename, 'a+') { |file|
-        file.puts("#{magento_product_id},#{shopify_product_id}")
-      }
     end
   end
 end

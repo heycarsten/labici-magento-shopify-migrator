@@ -31,6 +31,8 @@ module LaBici
 
       product.save
 
+      sleep 0.55
+
       product
     end
 
