@@ -3,7 +3,7 @@ require 'labici/shopify'
 require 'fileutils'
 
 module LaBici
-  class Migrator
+  class ProductMigrator
     attr_reader :magento, :shopify
 
     MAG_TYPE_CATEGORY_ID = 24
@@ -108,11 +108,13 @@ module LaBici
         shopify_attrs   = magento_to_shopify_attrs(mp)
         shopify_product = shopify.create_product(shopify_attrs)
 
-        if shopify_product
+        if shopify_product.valid?
           remember_product_ids(mp[:id], shopify_product.id)
           puts '✅'
         else
           puts '💔'
+          ap shopify_attrs
+          ap shopify_product.errors
           break
         end
 
@@ -145,9 +147,9 @@ module LaBici
     end
 
     def remember_product_ids(magento_product_id, shopify_product_id)
-      # File.open(memory_filename, 'a+') { |file|
-      #   file.puts("#{magento_product_id},#{shopify_product_id}")
-      # }
+      File.open(memory_filename, 'a+') { |file|
+        file.puts("#{magento_product_id},#{shopify_product_id}")
+      }
     end
   end
 end

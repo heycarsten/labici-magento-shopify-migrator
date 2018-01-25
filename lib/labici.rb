@@ -9,3 +9,4 @@ end
 
 require 'labici/configurable_product_migrator'
 require 'labici/simple_product_migrator'
+require 'labici/customer_migrator'

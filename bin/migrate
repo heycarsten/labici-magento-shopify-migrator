@@ -2,8 +2,20 @@
 $:.unshift(File.join(File.dirname(__FILE__), *%w[.. lib]))
 require 'labici'
 
-if 'simple' == ARGV[0]
-  LaBici::SimpleProductMigrator.run!
+MIGRATIONS = {
+  'simple-products'       => LaBici::SimpleProductMigrator,
+  'configurable-products' => LaBici::ConfigurableProductMigrator,
+  'customers'             => LaBici::CustomerMigrator
+}
+
+if (migrator = MIGRATIONS[ARGV[0]])
+  migrator.run!
 else
-  LaBici::ConfigurableProductMigrator.run!
+  puts "Usage: bin/migrate [MIGRATION]"
+  puts
+  puts "Available migrations:"
+  MIGRATIONS.keys.each { |m|
+    puts " - #{m}"
+  }
+  puts
 end
