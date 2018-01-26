@@ -2,9 +2,30 @@ require 'base64'
 
 module LaBici
   class Shopify
+    API_WAIT_SECS = 0.55
+
     def initialize
       ShopifyAPI::Base.site = "https://#{ENV['SHOPIFY_API_KEY']}:#{ENV['SHOPIFY_API_PASSWORD']}" \
         "@#{ENV['SHOPIFY_SHOP_NAME']}.myshopify.com/admin"
+    end
+
+    def create_customer(first_name:, last_name:, email:, verified_email:, phone: nil, addresses: nil, send_email_welcome: false, metafields: nil)
+      customer = ShopifyAPI::Customer.new
+
+      customer.first_name         = first_name
+      customer.last_name          = last_name
+      customer.email              = email
+      customer.verified_email     = verified_email
+      customer.phone              = phone if phone
+      customer.send_email_welcome = send_email_welcome
+      customer.addresses          = addresses if addresses
+      customer.metafields         = metafields if metafields
+
+      customer.save
+
+      sleep API_WAIT_SECS
+
+      customer
     end
 
     def create_product(title:, body_html:, vendor:, product_type:, options: nil, variants: nil, price:, sku:, tags: [], images: nil, meta_title_tag: nil, meta_description_tag: nil)
@@ -31,7 +52,7 @@ module LaBici
 
       product.save
 
-      sleep 0.55
+      sleep API_WAIT_SECS
 
       product
     end
