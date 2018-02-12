@@ -1,0 +1,22 @@
+#!/usr/bin/env ruby
+$:.unshift(File.join(File.dirname(__FILE__), *%w[.. lib]))
+require 'labici'
+
+TASKS = {
+  'migrate-simple-products'       => LaBici::SimpleProductMigrator,
+  'migrate-configurable-products' => LaBici::ConfigurableProductMigrator,
+  'migrate-customers'             => LaBici::CustomerMigrator,
+  'customer-report'               => LaBici::CustomerReport
+}
+
+if (task = TASKS[ARGV[0]])
+  task.run!(ARGV[1])
+else
+  puts "Usage: bin/run [TASK]"
+  puts
+  puts "Available tasks:"
+  TASKS.keys.each { |t|
+    puts " - #{t}"
+  }
+  puts
+end

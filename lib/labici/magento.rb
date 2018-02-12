@@ -341,6 +341,18 @@ LEFT JOIN #{join_to_table} v#{i} ON
 #{"WHERE e.type_id = '#{entity_type_id}'" if entity_type_id}
 #{"WHERE e.entity_id IN (#{entity_ids.join(',')})" if entity_ids}
 #{"WHERE e.type_id = 'simple' AND (SELECT COUNT(cpo.option_id) FROM catalog_product_option cpo WHERE cpo.product_id = e.entity_id) > 0" if simple_with_options}
+
+    def total_invoiced_by_customer
+      db[<<-SQL]
+SELECT DISTINCT
+  customer_id,
+  customer_email,
+  customer_firstname,
+  customer_lastname,
+  SUM(subtotal_invoiced) AS total
+FROM sales_flat_order
+GROUP BY customer_email
+ORDER BY SUM(subtotal_invoiced) DESC
       SQL
     end
   end
