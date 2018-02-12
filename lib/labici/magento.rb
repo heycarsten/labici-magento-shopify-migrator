@@ -236,10 +236,11 @@ LEFT JOIN #{join_to_table} v#{i} ON
       SQL
     end
 
-    def products(manufacturer_value: nil, entity_type_id: nil, entity_ids: nil, simple_with_options: false)
+    def products(manufacturer_value: nil, entity_type_id: nil, entity_ids: nil, simple_without_parent: false)
       db[<<-SQL]
         SELECT
           e.entity_id AS id,
+          e.type_id AS type,
           e.sku AS sku,
           v1.value AS title,
           v3.value AS description,
@@ -340,7 +341,9 @@ LEFT JOIN #{join_to_table} v#{i} ON
 #{"WHERE cpf.manufacturer_value = '#{manufacturer_value}'" if manufacturer_value}
 #{"WHERE e.type_id = '#{entity_type_id}'" if entity_type_id}
 #{"WHERE e.entity_id IN (#{entity_ids.join(',')})" if entity_ids}
-#{"WHERE e.type_id = 'simple' AND (SELECT COUNT(cpo.option_id) FROM catalog_product_option cpo WHERE cpo.product_id = e.entity_id) > 0" if simple_with_options}
+#{"WHERE e.type_id = 'simple' AND NOT EXISTS (SELECT * FROM catalog_product_relation cpr WHERE cpr.child_id = e.entity_id)" if simple_without_parent}
+      SQL
+    end
 
     def total_invoiced_by_customer
       db[<<-SQL]

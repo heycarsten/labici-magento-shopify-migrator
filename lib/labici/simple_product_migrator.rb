@@ -3,13 +3,15 @@ require 'labici/product_migrator'
 module LaBici
   class SimpleProductMigrator < ProductMigrator
     def magento_products
-      magento.products(simple_with_options: true)
+      magento.products(simple_without_parent: true)
     end
 
     def magento_to_shopify_attrs(mp)
       attrs = super
 
       mag_options = magento.product_options(mp[:id]).all
+
+      return attrs if mag_options.empty?
 
       option_types = mag_options.map { |row| row[:option_name] }.uniq
 
