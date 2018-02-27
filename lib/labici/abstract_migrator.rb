@@ -2,8 +2,8 @@ module LaBici
   class AbstractMigrator
     attr_reader :magento, :shopify
 
-    def self.run!
-      new.run!
+    def self.run!(*args)
+      new.run!(*args)
     end
 
     def self.underscore(str)
@@ -13,7 +13,7 @@ module LaBici
         gsub(/[A-Z]{1}/) { |s| "_#{s.downcase}" }.sub(/\A_/, '')
     end
 
-    def initialize
+    def initialize(*args)
       @magento = Magento.new
       @shopify = Shopify.new
       FileUtils.touch(memory_filename)
@@ -27,7 +27,7 @@ module LaBici
       raise NotImplementedError
     end
 
-    def run!
+    def run!(*args)
       puts "==== [#{label}] #{banner}"
       perform
       puts "---- Done!"
