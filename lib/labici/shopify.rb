@@ -9,6 +9,10 @@ module LaBici
         "@#{ENV['SHOPIFY_SHOP_NAME']}.myshopify.com/admin"
     end
 
+    def search_customers(query)
+      ShopifyAPI::Customer.search(query: query)
+    end
+
     def create_customer(first_name:, last_name:, email:, verified_email:, phone: nil, addresses: nil, send_email_welcome: false, metafields: nil)
       customer = ShopifyAPI::Customer.new
 
