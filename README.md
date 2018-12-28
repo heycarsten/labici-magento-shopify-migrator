@@ -1,11 +1,13 @@
 # Migration tools to get La Bicicletta on Shopify
 
-## Getting the data
+You are looking at is the result of my effots to help La Bicicletta (a bike shop in Toronto, Canada) migrate their online store from Magento to Shopify.
 
-1. For the Magento database PHPMyAdmin and export it with simple default options and place the dumped file into `data/megento_db`
-2. For the Magento media files found in `media/catalog` download the contents into `data/magento_media`
+## Staging the Magento data
 
-## Using the migrator
+1. Dump the Magento MySQL database (PHPMyAdmin w/ simple default options works) and place the dumped SQL file into `data/megento_db`
+2. Copy the Magento media files found in `media/catalog` into `data/magento_media`
+
+## Running the migrator
 
 1. Put the required keys and stuff in `.env`
 2. Install [Docker Desktop](https://www.docker.com/products/docker-desktop)
