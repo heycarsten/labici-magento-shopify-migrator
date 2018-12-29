@@ -14,7 +14,7 @@ Thanks to La Bicicletta for releasing this work as open source software! They ar
 
 ## Background :bike:
 
-Magento was not meeting the needs of the business anymore, the decision was made to move to Shopify. There was a lot of data in Magento, ideally it could be moved to Shopify with some form of automation. Over the course of about 40h of time I went from never having looked at a Magento database schema, to having successfully migrated all products, categories, and customers to Shopify.
+Magento was not meeting the needs of the business anymore, the decision was made to move to Shopify. There was a lot of data in Magento, ideally it could be moved to Shopify with some form of automation. Over the course of about 40h of time I went from never having looked at a Magento database schema, to what you are looking at.
 
 This codebase is heavily tied to the requirements of this specific migration, but I think there is a lot to learn in here and apply to your own migration.
 
