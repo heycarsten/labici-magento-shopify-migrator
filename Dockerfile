@@ -1,5 +1,5 @@
 FROM ruby:2.5
-RUN apt-get update -qq && apt-get install -y build-essential libmysqlclient-dev nodejs
+RUN apt-get update -qq && apt-get install -y build-essential default-libmysqlclient-dev nodejs
 RUN mkdir /labici
 WORKDIR /labici
 ADD Gemfile /labici/Gemfile
