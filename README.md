@@ -92,4 +92,4 @@ The workflow for using this is:
 
 ## Questions :thinking: / Ideas :scream:
 
-Open a ticket and I'll try to respond as quickly as I can.
+Open an [issue](https://github.com/heycarsten/labici-magento-shopify-migrator/issues/new) and I'll try to respond as quickly as I can :+1:
