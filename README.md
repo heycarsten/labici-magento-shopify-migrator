@@ -47,7 +47,7 @@ The directory structure should look something like this:
 5. (First time) Run: `docker-compose build` to build the containers
 6. Run: `docker-compose up` to start the database
 7. Open another terminal window or tab
-8. Run a command: `docker-compose exec app bin/console` (look in the `bin` directory for more) another example: `docker-compose exec app bin/run customer-report`
+8. Run a command: `docker-compose run --rm app bin/console` (look in the `bin` directory for more) another example: `docker-compose run --rm app bin/run customer-report`
 9. When you're done, find the terminal running `docker-compose up` and press `Ctrl+C` to shut it down
 
 ## Questions :thinking: / Ideas :scream:
