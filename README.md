@@ -34,6 +34,10 @@ For us this was the right mix of automation and manual effort, that might be dif
 1. Dump the Magento MySQL database (PHPMyAdmin w/ simple default options works) and place the dumped SQL file into `data/megento_db` Docker will pick it up when you build
 2. Copy the Magento media files found in `media/catalog` (on your web server hosting Magento) into `data/magento_media`
 
+The directory structure should look something like this:
+
+![](https://snappities.s3.amazonaws.com/7t3b20qrk128ubgds6ij.png)
+
 ## Running the migrator
 
 1. Put the required keys and stuff in `.env`
