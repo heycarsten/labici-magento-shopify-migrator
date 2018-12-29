@@ -1,6 +1,6 @@
 # Tooling to migrate data from Magento 1.9 to Shopify
 
-You are looking at is the result of my efforts to help [La Bicicletta](https://labicicletta.com) (a bike shop in Toronto, Canada) migrate their online store from Magento to Shopify. It is very specific to
+What you're looking at is the result of my efforts to help [La Bicicletta](https://labicicletta.com) (a bike shop in Toronto, Canada) migrate their online store from Magento to Shopify.
 
 Thanks to La Bicicletta for releasing this work as open source software! They are a great bunch of humans, giving back to their community by supporting causes like [Toronto Hustle](https://www.toronto-hustle.com/welcome-1). They also happen to run one of the finest bike shops in Toronto and online! Check them out:
 
@@ -47,7 +47,7 @@ The directory structure should look something like this:
 5. (First time) Run: `docker-compose build` to build the containers
 6. Run: `docker-compose up` to start the database
 7. Open another terminal window or tab
-8. Run a command: `docker-compose exec app bin/console` (look in the `bin` directory for more)
+8. Run a command: `docker-compose exec app bin/console` (look in the `bin` directory for more) another example: `docker-compose exec app bin/run customer-report`
 9. When you're done, find the terminal running `docker-compose up` and press `Ctrl+C` to shut it down
 
 ## Questions :thinking: / Ideas :scream:
