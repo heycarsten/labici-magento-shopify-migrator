@@ -7,7 +7,7 @@ TASKS = {
   'migrate-configurable-products' => LaBici::ConfigurableProductMigrator,
   'migrate-customers'             => LaBici::CustomerMigrator,
   'customer-report'               => LaBici::CustomerReport
-}
+}.freeze
 
 if (task = TASKS[ARGV[0]])
   task.run!(ARGV[1])
