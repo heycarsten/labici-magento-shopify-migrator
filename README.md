@@ -1,4 +1,4 @@
-# Migration tooling to move data from Magento 1.9 to Shopify
+# Tooling to migrate data from Magento 1.9 to Shopify
 
 You are looking at is the result of my efforts to help [La Bicicletta](https://labicicletta.com) (a bike shop in Toronto, Canada) migrate their online store from Magento to Shopify. It is very specific to
 
