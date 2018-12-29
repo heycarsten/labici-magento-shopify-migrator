@@ -4,13 +4,13 @@ You are looking at is the result of my efforts to help [La Bicicletta](https://l
 
 Thanks to La Bicicletta for releasing this work as open source software! They are a great bunch of humans, giving back to their community by supporting causes like [Toronto Hustle](https://www.toronto-hustle.com/welcome-1). They also happen to run one of the finest bike shops in Toronto and online! Check them out:
 
+<br>
 <p align="center">
   <a href="https://labicicletta.com">
     <img height="52px" alt="La Bicicletta" src="https://snappities.s3.amazonaws.com/zcd003bl4xvc1vv9iri4.png">
   </a>
 </p>
-
-<br><br>
+<br>
 
 ## Staging the Magento data
 
