@@ -6,7 +6,7 @@ Thanks to La Bicicletta for releasing this work as open source software! They ar
 
 <p align="center">
   <a href="https://labicicletta.com">
-    <img height="25%" alt="La Bicicletta" src="https://snappities.s3.amazonaws.com/zcd003bl4xvc1vv9iri4.png">
+    <img height="52px" alt="La Bicicletta" src="https://snappities.s3.amazonaws.com/zcd003bl4xvc1vv9iri4.png">
   </a>
 </p>
 
