@@ -12,16 +12,25 @@ Thanks to La Bicicletta for releasing this work as open source software! They ar
 </p>
 <br>
 
+## Background
+
+Magento was not meeting the needs of the business anymore, the decision was made to move to Shopify. There was a lot of data in Magento, ideally it could be moved to Shopify with some form of automation. Over the course of about 40h of time I went from never having looked at a Magento database schema, to having successfully migrated all products, categories, and customers to Shopify.
+
+This codebase is heavily tied to the requirements of this specific migration, but I think there is a lot to learn in here and apply to your own migration.
+
 ## Staging the Magento data
 
-1. Dump the Magento MySQL database (PHPMyAdmin w/ simple default options works) and place the dumped SQL file into `data/megento_db`
-2. Copy the Magento media files found in `media/catalog` into `data/magento_media`
+1. Dump the Magento MySQL database (PHPMyAdmin w/ simple default options works) and place the dumped SQL file into `data/megento_db` Docker will pick it up when you build
+2. Copy the Magento media files found in `media/catalog` (on your web server hosting Magento) into `data/magento_media`
 
 ## Running the migrator
 
 1. Put the required keys and stuff in `.env`
 2. Install [Docker Desktop](https://www.docker.com/products/docker-desktop)
 3. `cd` into this project directory
-4. In a terminal window, run: `docker-compose up`
-5. In another terminal window, run: `docker-compose run --rm app bin/migrate`
-6. When you're done, run `docker-compose down`
+4. Open a terminal window
+5. (First time) Run: `docker-compose build` to build the containers
+6. Run: `docker-compose up` to start the database
+7. Open another terminal window or tab
+8. Run: `docker-compose exec app bin/console`
+9. When you're done, find the terminal running `docker-compose up` and press `Ctrl+C` to shut it down
