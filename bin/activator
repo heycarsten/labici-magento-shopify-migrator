@@ -1,0 +1,22 @@
+#!/usr/bin/env ruby
+$:.unshift(File.join(File.dirname(__FILE__), *%w[.. lib]))
+require 'labici'
+
+TASKS = {
+  'export-customers-csv' => :export_csv!,
+  'import-customers-csv' => :load_db!,
+  'sync-activation-urls' => :sync_activation_urls!
+}.freeze
+
+activator = LaBici::CustomerActivator.new
+
+if (task = TASKS[ARGV[0].downcase.strip])
+  activator.send(task)
+else
+  puts "Usage: bin/activator [TASK]"
+  puts
+  puts "Available tasks:"
+  TASKS.keys.each { |t|
+    puts " - #{t}"
+  }
+end

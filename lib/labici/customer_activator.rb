@@ -2,11 +2,15 @@ require 'labici/shopify'
 require 'csv'
 
 module LaBici
-  class CSVExporter
+  class CustomerActivator
     def initialize
       @api = LaBici::Shopify.new
-      @db = Sequel.sqlite('/Users/carsten/Desktop/customers.db')
+      @db = Sequel.sqlite(File.join(root, 'data/customers.db')
       init_db!
+    end
+
+    def root
+      @root ||= File.expand_path('../../..', __FILE__)
     end
 
     def init_db!
@@ -21,7 +25,7 @@ module LaBici
     end
 
     def load_db!
-      CSV.foreach('/Users/carsten/Desktop/source-customers.csv', headers: true) do |row|
+      CSV.foreach(File.join(root, 'data/customers.csv'), headers: true) do |row|
         next if row['Email'].blank?
         next if @db[:customers].where(email: row['Email']).any?
 
@@ -34,7 +38,7 @@ module LaBici
     end
 
     def export_csv!
-      CSV.open('/Users/carsten/Desktop/customers-with-activation-urls.csv', 'wb') do |csv|
+      CSV.open(File.join(root, 'data/customers-with-activation-urls.csv'), 'wb') do |csv|
         csv << ['Email', 'First Name', 'Last Name', 'Activation URL']
 
         @db[:customers].where(Sequel.lit('activation_url IS NOT NULL')).each do |c|
@@ -76,21 +80,6 @@ module LaBici
           next
         end
       end
-
-      #customers = @api.search_customers("")
-
-      # customers.each do |customer|
-      #   puts "Invite: #{customer.email}"
-      #   begin
-      #     customer.send_invite
-      #     puts "✅"
-      #   rescue ActiveResource::ResourceInvalid => e
-      #     puts "❌"
-      #     puts e.inspect
-      #   end
-      # end
-
-      nil
     end
   end
 end
