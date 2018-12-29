@@ -24,8 +24,8 @@ The overall workflow here is:
 
 - Get the data out of Magento and place it in the `data` directory
 - Register with Shopify and generate an API key with admin access
-- Run the migrations to extract simple products and configurable products
-- Run the migration to import customers
+- Run the migrations to export simple products and configurable products to Shopify
+- Run the migration to export customers to Shopify
 
 For us this was the right mix of automation and manual effort, that might be different for you.
 
