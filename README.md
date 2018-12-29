@@ -18,6 +18,17 @@ Magento was not meeting the needs of the business anymore, the decision was made
 
 This codebase is heavily tied to the requirements of this specific migration, but I think there is a lot to learn in here and apply to your own migration.
 
+## Layout / Overview
+
+The overall workflow here is:
+
+- Get the data out of Magento and place it in the `data` directory
+- Register with Shopify and generate an API key with admin access
+- Run the migrations to extract simple products and configurable products
+- Run the migration to import customers
+
+For us this was the right mix of automation and manual effort, that might be different for you.
+
 ## Staging the Magento data
 
 1. Dump the Magento MySQL database (PHPMyAdmin w/ simple default options works) and place the dumped SQL file into `data/megento_db` Docker will pick it up when you build
@@ -32,5 +43,9 @@ This codebase is heavily tied to the requirements of this specific migration, bu
 5. (First time) Run: `docker-compose build` to build the containers
 6. Run: `docker-compose up` to start the database
 7. Open another terminal window or tab
-8. Run: `docker-compose exec app bin/console`
+8. Run a command: `docker-compose exec app bin/console` (look in the `bin` directory for more)
 9. When you're done, find the terminal running `docker-compose up` and press `Ctrl+C` to shut it down
+
+## Questions / ideas
+
+Open a ticket and I'll try to respond as quickly as I can.
