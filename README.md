@@ -1,6 +1,14 @@
 # Migration tools to get La Bicicletta on Shopify
 
-You are looking at is the result of my effots to help La Bicicletta (a bike shop in Toronto, Canada) migrate their online store from Magento to Shopify.
+You are looking at is the result of my efforts to help [La Bicicletta](https://labicicletta.com) (a bike shop in Toronto, Canada) migrate their online store from Magento to Shopify.
+
+Thanks to La Bicicletta for releasing this work as open source software! They are a great bunch of humans, supporting their community and beyond. They also happen to run one of the finest bike shops in Toronto and online. Check them out:
+
+<p align="center">
+  <a href="https://labicicletta.com">
+    <img alt="La Bicicletta" src="https://snappities.s3.amazonaws.com/zcd003bl4xvc1vv9iri4.png">
+  </a>
+</p>
 
 ## Staging the Magento data
 
@@ -13,5 +21,5 @@ You are looking at is the result of my effots to help La Bicicletta (a bike shop
 2. Install [Docker Desktop](https://www.docker.com/products/docker-desktop)
 3. `cd` into this project directory
 4. In a terminal window, run: `docker-compose up`
-5. In another terminal window, run: `docker-compose exec app bin/migrate`
+5. In another terminal window, run: `docker-compose run --rm app bin/migrate`
 6. When you're done, run `docker-compose down`
