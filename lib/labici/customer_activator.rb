@@ -5,7 +5,7 @@ module LaBici
   class CustomerActivator
     def initialize
       @api = LaBici::Shopify.new
-      @db = Sequel.sqlite(File.join(root, 'data/customers.db')
+      @db = Sequel.sqlite(File.join(root, 'data/customers.db'))
       init_db!
     end
 
